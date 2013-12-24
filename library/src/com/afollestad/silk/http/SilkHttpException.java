@@ -2,7 +2,9 @@ package com.afollestad.silk.http;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.StatusLine;
+import ch.boye.httpclientandroidlib.util.EntityUtils;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 /**
@@ -13,6 +15,7 @@ public class SilkHttpException extends Exception {
     private int mStatus = -1;
     private String mReason;
     private boolean mIsResponse;
+    private String mResponseBody;
 
     SilkHttpException(String msg) {
         super(msg);
@@ -27,6 +30,11 @@ public class SilkHttpException extends Exception {
         StatusLine stat = response.getStatusLine();
         mStatus = stat.getStatusCode();
         mReason = stat.getReasonPhrase();
+        try {
+            mResponseBody = EntityUtils.toString(response.getEntity());
+        } catch (IOException e) {
+            mResponseBody = null;
+        }
     }
 
     /**
@@ -53,7 +61,9 @@ public class SilkHttpException extends Exception {
     @Override
     public String getMessage() {
         if (isServerResponse()) {
-            return getStatusCode() + " " + getReasonPhrase();
+            String message = getStatusCode() + " " + getReasonPhrase();
+            if (mResponseBody != null) message += "\n" + mResponseBody;
+            return message;
         }
         return super.getMessage();
     }
