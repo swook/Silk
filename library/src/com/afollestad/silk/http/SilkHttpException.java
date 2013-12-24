@@ -2,9 +2,7 @@ package com.afollestad.silk.http;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
 import ch.boye.httpclientandroidlib.StatusLine;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 /**
@@ -25,16 +23,12 @@ public class SilkHttpException extends Exception {
         super((e instanceof SocketTimeoutException) ? "Connection timed out" : e.getMessage());
     }
 
-    SilkHttpException(HttpResponse response) {
+    SilkHttpException(HttpResponse response, String body) {
         mIsResponse = true;
         StatusLine stat = response.getStatusLine();
         mStatus = stat.getStatusCode();
         mReason = stat.getReasonPhrase();
-        try {
-            mResponseBody = EntityUtils.toString(response.getEntity());
-        } catch (IOException e) {
-            mResponseBody = null;
-        }
+        mResponseBody = body;
     }
 
     /**

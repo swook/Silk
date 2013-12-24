@@ -112,7 +112,13 @@ class SilkHttpBase {
         int status = response.getStatusLine().getStatusCode();
         if (status != 200 && status != 201) {
             reset();
-            throw new SilkHttpException(response);
+            String body;
+            try {
+                body = new String(content, "UTF-8");
+            } catch (Exception e) {
+                body = null;
+            }
+            throw new SilkHttpException(response, body);
         }
         reset();
         return new SilkHttpResponse(response, content);
