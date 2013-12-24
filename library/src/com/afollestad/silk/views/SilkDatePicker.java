@@ -6,10 +6,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import com.afollestad.silk.R;
+import com.afollestad.silk.adapters.SilkSpinnerAdapter;
 
 import java.util.Calendar;
 
@@ -169,12 +169,5 @@ public class SilkDatePicker extends LinearLayout {
         String day = mCal.get(Calendar.DAY_OF_MONTH) + "";
         if (day.length() == 1) day = "0" + day;
         return year + "/" + month + "/" + day;
-    }
-
-    public final class SilkSpinnerAdapter extends ArrayAdapter<String> {
-        public SilkSpinnerAdapter(Context context) {
-            super(context, R.layout.spinner_item);
-            super.setDropDownViewResource(R.layout.spinner_item_dropdown);
-        }
     }
 }
