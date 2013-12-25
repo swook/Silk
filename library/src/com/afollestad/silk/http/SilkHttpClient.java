@@ -14,6 +14,10 @@ import ch.boye.httpclientandroidlib.client.methods.HttpPut;
  */
 public class SilkHttpClient extends SilkHttpBase {
 
+    public interface ResponseProcessor {
+        public void onProcessError(SilkHttpException exception) throws Exception;
+    }
+
     private String mHost;
 
     /**
@@ -83,21 +87,21 @@ public class SilkHttpClient extends SilkHttpBase {
     /**
      * Makes a GET request on the calling thread.
      */
-    public SilkHttpResponse get(String url) throws SilkHttpException {
+    public SilkHttpResponse get(String url) throws Exception {
         return performRequest(new HttpGet(getUrl(url)));
     }
 
     /**
      * Makes a POST request on the calling thread.
      */
-    public SilkHttpResponse post(String url) throws SilkHttpException {
+    public SilkHttpResponse post(String url) throws Exception {
         return post(url, null);
     }
 
     /**
      * Makes a POST request on the calling thread, with a POST entity (body).
      */
-    public SilkHttpResponse post(String url, SilkHttpBody body) throws SilkHttpException {
+    public SilkHttpResponse post(String url, SilkHttpBody body) throws Exception {
         HttpPost post = new HttpPost(getUrl(url));
         if (body != null) post.setEntity(body.getEntity());
         return performRequest(post);
@@ -106,14 +110,14 @@ public class SilkHttpClient extends SilkHttpBase {
     /**
      * Makes a PUT request on the calling thread.
      */
-    public SilkHttpResponse put(String url) throws SilkHttpException {
+    public SilkHttpResponse put(String url) throws Exception {
         return put(url, null);
     }
 
     /**
      * Makes a GET request on the calling thread, with a PUT entity (body).
      */
-    public SilkHttpResponse put(String url, SilkHttpBody body) throws SilkHttpException {
+    public SilkHttpResponse put(String url, SilkHttpBody body) throws Exception {
         HttpPut post = new HttpPut(getUrl(url));
         if (body != null) post.setEntity(body.getEntity());
         return performRequest(post);
@@ -122,7 +126,7 @@ public class SilkHttpClient extends SilkHttpBase {
     /**
      * Makes a DELETE request on the calling thread.
      */
-    public SilkHttpResponse delete(String url) throws SilkHttpException {
+    public SilkHttpResponse delete(String url) throws Exception {
         return performRequest(new HttpDelete(getUrl(url)));
     }
 
@@ -144,7 +148,7 @@ public class SilkHttpClient extends SilkHttpBase {
                             callback.onComplete(response);
                         }
                     });
-                } catch (final SilkHttpException e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                     getHandler().post(new Runnable() {
                         @Override
@@ -181,7 +185,7 @@ public class SilkHttpClient extends SilkHttpBase {
                             callback.onComplete(response);
                         }
                     });
-                } catch (final SilkHttpException e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                     getHandler().post(new Runnable() {
                         @Override
@@ -218,7 +222,7 @@ public class SilkHttpClient extends SilkHttpBase {
                             callback.onComplete(response);
                         }
                     });
-                } catch (final SilkHttpException e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                     getHandler().post(new Runnable() {
                         @Override
@@ -247,7 +251,7 @@ public class SilkHttpClient extends SilkHttpBase {
                             callback.onComplete(response);
                         }
                     });
-                } catch (final SilkHttpException e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                     getHandler().post(new Runnable() {
                         @Override

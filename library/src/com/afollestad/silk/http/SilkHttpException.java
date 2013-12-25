@@ -52,6 +52,10 @@ public class SilkHttpException extends Exception {
         return mIsResponse;
     }
 
+    public String getResponseBody() {
+        return mResponseBody;
+    }
+
     @Override
     public String getMessage() {
         if (isServerResponse()) {

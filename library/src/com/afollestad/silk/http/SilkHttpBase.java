@@ -32,6 +32,7 @@ class SilkHttpBase {
     private final Context mContext;
     private final Handler mHandler;
     private HttpClient mClient;
+    private SilkHttpClient.ResponseProcessor mProcessor;
 
     public SilkHttpBase(Context context, Handler handler) {
         if (handler == null) {
@@ -83,7 +84,16 @@ class SilkHttpBase {
         mNetworkExecutorService.execute(runnable);
     }
 
-    protected SilkHttpResponse performRequest(final HttpRequestBase request) throws SilkHttpException {
+    public final void setProcessor(SilkHttpClient.ResponseProcessor processor) {
+        mProcessor = processor;
+    }
+
+    private void processError(SilkHttpException exception) throws Exception {
+        if (mProcessor != null) mProcessor.onProcessError(exception);
+        else throw exception;
+    }
+
+    protected SilkHttpResponse performRequest(final HttpRequestBase request) throws Exception {
         if (mClient == null)
             throw new IllegalStateException("The client has already been shutdown, you must re-initialize it.");
         else if (mContext != null) {
@@ -118,7 +128,7 @@ class SilkHttpBase {
             } catch (Exception e) {
                 body = null;
             }
-            throw new SilkHttpException(response, body);
+            processError(new SilkHttpException(response, body));
         }
         reset();
         return new SilkHttpResponse(response, content);
