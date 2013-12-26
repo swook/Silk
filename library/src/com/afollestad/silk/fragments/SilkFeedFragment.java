@@ -13,8 +13,8 @@ import java.util.List;
  */
 public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends SilkListFragment<ItemType> {
 
-    protected boolean mInitialLoadOnResume;
     private boolean mBlockPaginate = false;
+    protected boolean mInitialLoadOnResume;
     private boolean mVisibileChangedHandled = false;
 
     @Override
