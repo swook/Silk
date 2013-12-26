@@ -8,14 +8,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import com.afollestad.silk.R;
 import com.afollestad.silk.adapters.SilkCursorAdapter;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
 
 /**
- * Same as the {@link SilkListFragment}, but loads contents from a cursor and displays them in a {@link com.afollestad.silk.adapters.SilkCursorAdapter}.
+ * A {@link SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
+ * convenience methods and handles a lot of things on its own to make things easy.
+ * <p/>
+ * The fragment uses a {@link com.afollestad.silk.adapters.SilkAdapter} to display items of type ItemType.
  *
  * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
@@ -72,26 +78,25 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     }
 
     /**
-     * Gets the SilkCursorAdapter used to add and remove items from the list.
+     * Gets the SilkAdapter used to add and remove items from the list.
      */
     public final SilkCursorAdapter<ItemType> getAdapter() {
         return mAdapter;
     }
 
     /**
-     * Only called once to cause inheriting classes to create a new SilkCursorAdapter that can later be retrieved using
+     * Causes the fragment's adapter to be recreated. Usually used when an app's theme changes and the context needs to be updated
+     * for the adapter so the list items are correctly themed.
+     */
+    public final void recreateAdapter() {
+        mAdapter = initializeAdapter();
+    }
+
+    /**
+     * Only called once to cause inheriting classes to create a new SilkAdapter that can later be retrieved using
      * {#getAdapter}.
      */
     protected abstract SilkCursorAdapter<ItemType> initializeAdapter();
-
-    protected void onPostLoadFromCursor(Cursor cursor) {
-        getAdapter().changeCursor(cursor);
-        setLoadComplete(false);
-    }
-
-    protected void clearProvider() {
-        getActivity().getContentResolver().delete(getLoaderUri(), null, null);
-    }
 
     /**
      * Called when an item in the list is tapped by the user.
@@ -103,17 +108,15 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     protected abstract void onItemTapped(int index, ItemType item, View view);
 
     /**
-     * Called when an item in the list is long-tapped by the user.
+     * Called when an item in the list is long-tapped by the user. Default implementation is empty and returns false.
      *
      * @param index The index of the long-tapped item.
      * @param item  The actual long-tapped item from the adapter.
      * @param view  The view in the list that was long-tapped.
      * @return Whether or not the event was handled.
      */
-    protected abstract boolean onItemLongTapped(int index, ItemType item, View view);
-
-    protected void onCursorEmpty() {
-        setLoadComplete(false);
+    protected boolean onItemLongTapped(int index, ItemType item, View view) {
+        return false;
     }
 
     /**
@@ -241,5 +244,18 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     @Override
     public final void onLoaderReset(Loader<Cursor> arg0) {
         if (getAdapter() != null) getAdapter().changeCursor(null);
+    }
+
+    protected void onCursorEmpty() {
+        setLoadComplete(false);
+    }
+
+    protected void onPostLoadFromCursor(Cursor cursor) {
+        getAdapter().changeCursor(cursor);
+        setLoadComplete(false);
+    }
+
+    protected void clearProvider() {
+        getActivity().getContentResolver().delete(getLoaderUri(), null, null);
     }
 }
