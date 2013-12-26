@@ -37,7 +37,7 @@ public class SilkImageManager {
     private final Context context;
     private final DiskCache mDiskCache;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private final ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
+    private ExecutorService mNetworkExecutorService = newConfiguredThreadPool();
     private final ExecutorService mDiskExecutorService = Executors.newCachedThreadPool(new LowPriorityThreadFactory());
     private int fallbackImageId;
     private boolean DEBUG = false;
@@ -62,6 +62,11 @@ public class SilkImageManager {
         BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>();
         RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();
         return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+    }
+
+    public final void cancelNetworkTasks() {
+        mNetworkExecutorService.shutdownNow();
+        mNetworkExecutorService = newConfiguredThreadPool();
     }
 
     private static LruCache<String, Bitmap> newConfiguredLruCache() {
@@ -147,6 +152,7 @@ public class SilkImageManager {
         mNetworkExecutorService.execute(new Runnable() {
             @Override
             public void run() {
+                if (Thread.currentThread().isInterrupted()) return;
                 final Bitmap bitmap = getBitmapFromExternal(key, source, dimension, new ProcessCallback() {
                     @Override
                     public Bitmap onProcess(Bitmap image) {
@@ -155,6 +161,7 @@ public class SilkImageManager {
                         return image;
                     }
                 });
+                if (Thread.currentThread().isInterrupted()) return;
                 log("Got " + source + " from external source.");
                 postCallback(callback, source, bitmap);
             }
