@@ -43,7 +43,7 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
         ContentResolver resolver = getActivity().getContentResolver();
         for (ItemType item : items)
             resolver.insert(getLoaderUri(), item.getContentValues());
-        onInitialRefresh();
+        super.onInitialRefresh();
     }
 
     protected abstract List<ItemType> refresh() throws Exception;
