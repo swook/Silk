@@ -79,7 +79,8 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     }
 
     /**
-     * Causes the fragment's adapter to be recreated.
+     * Causes the fragment's adapter to be recreated. Usually used when an app's theme changes and the context needs to be updated
+     * for the adapter so the list items are correctly themed.
      */
     public final void recreateAdapter() {
         mAdapter = initializeAdapter();
@@ -101,14 +102,16 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     protected abstract void onItemTapped(int index, ItemType item, View view);
 
     /**
-     * Called when an item in the list is long-tapped by the user.
+     * Called when an item in the list is long-tapped by the user. Default implementation is empty and returns false.
      *
      * @param index The index of the long-tapped item.
      * @param item  The actual long-tapped item from the adapter.
      * @param view  The view in the list that was long-tapped.
      * @return Whether or not the event was handled.
      */
-    protected abstract boolean onItemLongTapped(int index, ItemType item, View view);
+    protected boolean onItemLongTapped(int index, ItemType item, View view) {
+        return false;
+    }
 
     /**
      * Gets whether or not the list is currently loading.
