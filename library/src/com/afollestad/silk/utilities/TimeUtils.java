@@ -148,6 +148,7 @@ public class TimeUtils {
         if (minuteInt < 10) timeStr += ":0" + minuteInt;
         else timeStr += ":" + minuteInt;
         if (time.get(Calendar.AM_PM) == Calendar.AM) timeStr += "AM";
+        else timeStr += "PM";
         return timeStr;
     }
 
