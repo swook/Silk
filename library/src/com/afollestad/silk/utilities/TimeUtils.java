@@ -139,6 +139,24 @@ public class TimeUtils {
         }
     }
 
+    public static String toStringTime(Calendar time) {
+        int hourInt = time.get(Calendar.HOUR);
+        int minuteInt = time.get(Calendar.MINUTE);
+        String timeStr = "";
+        if (hourInt == 0) timeStr += "12";
+        else timeStr += "" + hourInt;
+        if (minuteInt < 10) timeStr += ":0" + minuteInt;
+        else timeStr += ":" + minuteInt;
+        if (time.get(Calendar.AM_PM) == Calendar.AM) timeStr += "AM";
+        return timeStr;
+    }
+
+    public static String toStringTime(Date time) {
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.setTime(time);
+        return toStringTime(cal);
+    }
+
     public static String toStringShort(Date date) {
         GregorianCalendar cal = new GregorianCalendar();
         cal.setTime(date);
