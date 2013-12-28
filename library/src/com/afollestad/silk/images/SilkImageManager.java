@@ -64,11 +64,6 @@ public class SilkImageManager {
         return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
     }
 
-    public final void cancelNetworkTasks() {
-        mNetworkExecutorService.shutdownNow();
-        mNetworkExecutorService = newConfiguredThreadPool();
-    }
-
     private static LruCache<String, Bitmap> newConfiguredLruCache() {
         return new LruCache<String, Bitmap>(MEM_CACHE_SIZE_KB * 1024) {
             @Override
