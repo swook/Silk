@@ -75,7 +75,7 @@ public abstract class SilkListFragment<ItemType extends SilkComparable> extends 
     /**
      * Gets the SilkAdapter used to add and remove items from the list.
      */
-    public final SilkAdapter<ItemType> getAdapter() {
+    public SilkAdapter<ItemType> getAdapter() {
         return mAdapter;
     }
 

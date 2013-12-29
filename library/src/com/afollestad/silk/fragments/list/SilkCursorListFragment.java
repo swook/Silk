@@ -58,16 +58,23 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     @Override
     public final void onLoaderReset(Loader<Cursor> arg0) {
         if (getAdapter() != null) {
-            ((SilkCursorAdapter)getAdapter()).changeCursor(null);
+            ((SilkCursorAdapter) getAdapter()).changeCursor(null);
         }
     }
+
+    @Override
+    public SilkCursorAdapter<ItemType> getAdapter() {
+        return (SilkCursorAdapter<ItemType>) super.getAdapter();
+    }
+
+    protected abstract SilkCursorAdapter<ItemType> initializeAdapter();
 
     protected void onCursorEmpty() {
         setLoadComplete(false);
     }
 
     protected void onPostLoadFromCursor(Cursor cursor) {
-        ((SilkCursorAdapter)getAdapter()).changeCursor(cursor);
+        ((SilkCursorAdapter) getAdapter()).changeCursor(cursor);
         setLoadComplete(false);
     }
 
