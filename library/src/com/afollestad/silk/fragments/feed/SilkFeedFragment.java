@@ -1,8 +1,9 @@
-package com.afollestad.silk.fragments;
+package com.afollestad.silk.fragments.feed;
 
 import android.os.Bundle;
 import android.view.View;
 import com.afollestad.silk.caching.SilkComparable;
+import com.afollestad.silk.fragments.list.SilkListFragment;
 import com.afollestad.silk.views.list.OnSilkScrollListener;
 import com.afollestad.silk.views.list.SilkListView;
 
@@ -15,24 +16,11 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
 
     private boolean mBlockPaginate = false;
     protected boolean mInitialLoadOnResume;
-    private boolean mVisibileChangedHandled = false;
 
     @Override
-    protected void onVisibilityChanged(boolean visible) {
-        super.onVisibilityChanged(visible);
-        if (visible && getView() != null) {
-            mVisibileChangedHandled = true;
-            onInitialRefresh();
-        } else mVisibileChangedHandled = false;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!mVisibileChangedHandled || (!isActuallyVisible() && mInitialLoadOnResume)) {
-            // If onVisibilityChanged() wasn't able to handle refreshing, or; if it is visible, then onVisibilityChanged() will handle it instead
-            onInitialRefresh();
-        }
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        onInitialRefresh();
     }
 
     protected void onPreLoad() {
@@ -151,11 +139,5 @@ public abstract class SilkFeedFragment<ItemType extends SilkComparable> extends 
                 }
             });
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (!mInitialLoadOnResume) onInitialRefresh();
     }
 }

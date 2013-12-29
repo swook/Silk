@@ -1,4 +1,4 @@
-package com.afollestad.silk.fragments;
+package com.afollestad.silk.fragments.base;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -92,8 +92,7 @@ public abstract class SilkFragment extends Fragment {
     }
 
     public final void runOnUiThread(Runnable runnable) {
-        if (getActivity() == null)
-            return;
+        if (getActivity() == null) return;
         getActivity().runOnUiThread(runnable);
     }
 }

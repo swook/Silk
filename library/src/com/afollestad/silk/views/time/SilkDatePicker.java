@@ -1,4 +1,4 @@
-package com.afollestad.silk.views;
+package com.afollestad.silk.views.time;
 
 import android.content.Context;
 import android.util.AttributeSet;

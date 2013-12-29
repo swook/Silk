@@ -1,9 +1,9 @@
-package com.afollestad.silk.fragments;
+package com.afollestad.silk.fragments.feed;
 
 import android.content.ContentResolver;
-import android.os.Bundle;
 import com.afollestad.silk.caching.SilkComparable;
 import com.afollestad.silk.caching.SilkCursorItem;
+import com.afollestad.silk.fragments.list.SilkCursorListFragment;
 
 import java.util.List;
 
@@ -11,27 +11,6 @@ import java.util.List;
  * @author Aidan Follestad (afollestad)
  */
 public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkCursorListFragment<ItemType> {
-
-    protected boolean mInitialLoadOnResume;
-    private boolean mVisibileChangedHandled = false;
-
-    @Override
-    protected void onVisibilityChanged(boolean visible) {
-        super.onVisibilityChanged(visible);
-        if (visible && getView() != null) {
-            mVisibileChangedHandled = true;
-            onInitialRefresh();
-        } else mVisibileChangedHandled = false;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!mVisibileChangedHandled || (!isActuallyVisible() && mInitialLoadOnResume)) {
-            // If onVisibilityChanged() wasn't able to handle refreshing, or; if it is visible, then onVisibilityChanged() will handle it instead
-            onInitialRefresh();
-        }
-    }
 
     protected void onPreLoad() {
         clearProvider();
@@ -85,11 +64,5 @@ public abstract class SilkCursorFeedFragment<ItemType extends SilkCursorItem & S
         });
         t.setPriority(Thread.MAX_PRIORITY);
         t.start();
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (!mInitialLoadOnResume) onInitialRefresh();
     }
 }

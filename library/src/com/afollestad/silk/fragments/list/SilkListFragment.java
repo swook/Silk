@@ -1,10 +1,5 @@
-package com.afollestad.silk.fragments;
+package com.afollestad.silk.fragments.list;
 
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,12 +8,12 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.afollestad.silk.R;
-import com.afollestad.silk.adapters.SilkCursorAdapter;
+import com.afollestad.silk.adapters.SilkAdapter;
 import com.afollestad.silk.caching.SilkComparable;
-import com.afollestad.silk.caching.SilkCursorItem;
+import com.afollestad.silk.fragments.base.SilkFragment;
 
 /**
- * A {@link SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
+ * A {@link com.afollestad.silk.fragments.base.SilkFragment} that shows a list, with an empty text, and has progress bar support. Has other various
  * convenience methods and handles a lot of things on its own to make things easy.
  * <p/>
  * The fragment uses a {@link com.afollestad.silk.adapters.SilkAdapter} to display items of type ItemType.
@@ -26,12 +21,12 @@ import com.afollestad.silk.caching.SilkCursorItem;
  * @param <ItemType> The type of items held in the fragment's list.
  * @author Aidan Follestad (afollestad)
  */
-public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & SilkComparable> extends SilkFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class SilkListFragment<ItemType extends SilkComparable> extends SilkFragment {
 
     private AbsListView mListView;
     private TextView mEmpty;
     private ProgressBar mProgress;
-    private SilkCursorAdapter<ItemType> mAdapter;
+    private SilkAdapter<ItemType> mAdapter;
     private boolean mLoading;
 
     /**
@@ -80,7 +75,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
     /**
      * Gets the SilkAdapter used to add and remove items from the list.
      */
-    public final SilkCursorAdapter<ItemType> getAdapter() {
+    public final SilkAdapter<ItemType> getAdapter() {
         return mAdapter;
     }
 
@@ -96,7 +91,7 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
      * Only called once to cause inheriting classes to create a new SilkAdapter that can later be retrieved using
      * {#getAdapter}.
      */
-    protected abstract SilkCursorAdapter<ItemType> initializeAdapter();
+    protected abstract SilkAdapter<ItemType> initializeAdapter();
 
     /**
      * Called when an item in the list is tapped by the user.
@@ -201,61 +196,5 @@ public abstract class SilkCursorListFragment<ItemType extends SilkCursorItem & S
                 return onItemLongTapped(index, item, view);
             }
         });
-    }
-
-    /**
-     * Cursor stuff
-     */
-
-    protected abstract Uri getLoaderUri();
-
-    protected abstract String getLoaderSelection();
-
-    protected abstract String[] getLoaderProjection();
-
-    protected abstract String getLoaderSort();
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        onInitialRefresh();
-    }
-
-    protected void onInitialRefresh() {
-        setLoading(true);
-        getLoaderManager().restartLoader(0, null, this);
-    }
-
-    @Override
-    public final Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), getLoaderUri(), getLoaderProjection(), getLoaderSelection(), null, getLoaderSort());
-    }
-
-    @Override
-    public final void onLoadFinished(Loader<Cursor> arg0, Cursor data) {
-        setLoadComplete(false);
-        if (data == null || data.getColumnCount() == 0 || data.getCount() == 0) {
-            onCursorEmpty();
-            return;
-        }
-        if (getAdapter() != null) onPostLoadFromCursor(data);
-    }
-
-    @Override
-    public final void onLoaderReset(Loader<Cursor> arg0) {
-        if (getAdapter() != null) getAdapter().changeCursor(null);
-    }
-
-    protected void onCursorEmpty() {
-        setLoadComplete(false);
-    }
-
-    protected void onPostLoadFromCursor(Cursor cursor) {
-        getAdapter().changeCursor(cursor);
-        setLoadComplete(false);
-    }
-
-    protected void clearProvider() {
-        getActivity().getContentResolver().delete(getLoaderUri(), null, null);
     }
 }
