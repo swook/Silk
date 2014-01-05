@@ -10,13 +10,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.afollestad.silk.R;
 
+/**
+ * Almost a replica of the stock {@link android.widget.Toast}, but has an OnClickListener that notifies you when the toast is tapped.
+ *
+ * @author Aidan Follestad (afollestad)
+ */
 public class ClickableToast {
 
     public final static int LENGTH_SHORT = 0;
     public final static int LENGTH_LONG = 1;
 
     private final Handler mHandler;
-    private final Activity mContext;
     private final View mParent;
     private final int mDuration;
     private final View mView;
@@ -27,7 +31,6 @@ public class ClickableToast {
 
     private ClickableToast(Activity context, View parent, int duration) {
         mHandler = new Handler();
-        mContext = context;
         mParent = parent;
         mDuration = duration;
         mView = context.getLayoutInflater().inflate(R.layout.clickable_toast, null);
@@ -68,8 +71,7 @@ public class ClickableToast {
     }
 
     public boolean isShowing() {
-        if (mWindow == null) return false;
-        return mWindow.isShowing();
+        return mWindow != null && mWindow.isShowing();
     }
 
     public void show() {
