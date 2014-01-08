@@ -84,10 +84,12 @@ public abstract class SilkDrawerActivity extends Activity {
     private void invalidateOpenClosed() {
         ActionBar ab = getActionBar();
         if (isDrawerOpen()) {
-            ab.setTitle(getOpenedTextRes());
+            if (getOpenedTextRes() != 0)
+                ab.setTitle(getOpenedTextRes());
             onDrawerOpened();
         } else {
-            ab.setTitle(mTitle);
+            if (mTitle != null)
+                ab.setTitle(mTitle);
             onDrawerClosed();
         }
         invalidateOptionsMenu();
