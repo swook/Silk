@@ -50,7 +50,11 @@ public class Silk {
      * Checks whether or not the calling app has permission to access the internet.
      */
     public static boolean hasInternetPermission(Context context) {
-        int res = context.checkCallingOrSelfPermission(Manifest.permission.INTERNET);
+        return declaresPermission(context, Manifest.permission.INTERNET);
+    }
+
+    public static boolean declaresPermission(Context context, String permission) {
+        int res = context.checkCallingOrSelfPermission(permission);
         return res == PackageManager.PERMISSION_GRANTED;
     }
 
